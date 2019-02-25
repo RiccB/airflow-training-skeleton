@@ -39,7 +39,7 @@ weekday_person_to_email = {
 
 
 def choice(execution_date, **context):
-    day = execution_date.strftime("%w").weekday()
+    day = execution_date.strftime("%A").weekday()
     return weekday_person_to_email[day]
 
 

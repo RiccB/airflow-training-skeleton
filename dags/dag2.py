@@ -19,7 +19,7 @@ bq_fetch_data = BigQueryGetDataOperator(
         from [bigquery-public-data.github_repos.commits] \
         where date(committer.date) = '{{ ds }}' \
         group by committer.name \
-        order by number asc \
+        order by number desc \
         limit 5",
     dag=dag
 )

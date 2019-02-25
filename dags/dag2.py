@@ -31,7 +31,7 @@ from airflow.models import Variable
 def send_to_slack_func(**context):
     operator = SlackAPIPostOperator(
         task_id='slack_api',
-        text=str(context.get('ti').xpull(key='return_value', task_ids='bq_fetch_data')),
+        text=str(context.get('ti').xcom_pull(key='return_value', task_ids='bq_fetch_data')),
         token=Variable.get('token'),
         channel=Variable.get("slack_channel")
     )

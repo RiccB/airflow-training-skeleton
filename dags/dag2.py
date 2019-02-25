@@ -30,7 +30,7 @@ from airflow.models import Variable
 
 def send_to_slack_func(**context):
     lista = context.get('ti').xcom_pull(key='return_value', task_ids='bq_fetch_data')
-    lista = ['date: {{ ds }}'] + lista
+    lista = ['date: {}'.format(context.get('ds'))] + lista
     operator = SlackAPIPostOperator(
         task_id='slack_api',
         text=str(lista),

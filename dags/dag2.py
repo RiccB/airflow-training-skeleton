@@ -31,7 +31,7 @@ def send_to_slack_func(**context):
     operator = SlackAPIPostOperator(
         task_id='slack_api',
         text=str(context['return_value']),
-        token='xoxp-559854890739-559228586160-561116849751-2c717700dd7b7a197765ac21770c9c08',
+        token='xoxp-559854890739-559228586160-559310907264-12f369bb2703bfa29cab067fd15870b5',
         channel=Variable.get("slack_channel")
     )
     return operator.execute(context=context)

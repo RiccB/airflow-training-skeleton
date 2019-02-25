@@ -39,12 +39,8 @@ weekday_person_to_email = {
 
 
 def choice(execution_date, **context):
-    if execution_date.strftime("%a") == 'Mon':
-        return 'Bob'
-    elif (execution_date.strftime("%a") == 'Tue') | (execution_date.strftime("%a") == 'Thu'):
-        return 'Joe'
-    else:
-        return 'Alice'
+    day = execution_date.strftime("%w").weekday()
+    return weekday_person_to_email[day]
 
 
 branch_task = BranchPythonOperator(
@@ -54,4 +50,7 @@ branch_task = BranchPythonOperator(
     dag=dag
 )
 
-print_weekday >> branch_task >> [DummyOperator(task_id=str(name), dag=dag) for name in list(set(weekday_person_to_email.values()))] >> DummyOperator(task_id='End', dag=dag)
+options = [DummyOperator(task_id=name, dag=dag) for name in list(set(weekday_person_to_email.values()))]
+end = DummyOperator(task_id='End', dag=dag)
+
+print_weekday >> branch_task >> options >> end

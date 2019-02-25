@@ -54,4 +54,4 @@ branch_task = BranchPythonOperator(
     dag=dag
 )
 
-print_weekday >> branch_task >> [DummyOperator(task_id=str(name), dag=dag) for name in list(set(weekday_person_to_email.values()))]
+print_weekday >> branch_task >> [DummyOperator(task_id=str(name), dag=dag) for name in list(set(weekday_person_to_email.values()))] >> DummyOperator(task_id='End', dag=dag)

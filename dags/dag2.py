@@ -1,3 +1,4 @@
+import airflow
 from airflow import DAG
 from datetime import datetime
 from airflow.operators.slack_operator import SlackAPIPostOperator
@@ -8,7 +9,7 @@ dag = DAG(
     schedule_interval='@daily',
     default_args={
         'owner': 'GoDataDriven',
-        'start_date': airflow.utils.dates.days.ago(2)
+        'start_date': airflow.utils.dates.days_ago(2)
     }
 )
 
@@ -16,7 +17,7 @@ bq_fetch_data = BigQueryGetDataOperator(
     task_id='bq_fetch_data',
     sql="select committer.name, count(*) as number \
         from `bigquery-public-data.github_repos.commits` \
-        where date(committer.date) = {{ ds }} \
+        where date(committer.date) = '{{ ds }}' \
         group by committer.name \
         order by number asc \
         limit 5",

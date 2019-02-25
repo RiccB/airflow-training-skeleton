@@ -3,6 +3,7 @@ from airflow.models import DAG
 from airflow.operators.bash_operator import BashOperator
 from airflow.operators.dummy_operator import DummyOperator
 from airflow.operators.python_operator import BranchPythonOperator, PythonOperator
+from airflow.utils.trigger_rule import TriggerRule
 
 args = {"owner": "godatadriven", "start_date": airflow.utils.dates.days_ago(14)}
 
@@ -51,6 +52,6 @@ branch_task = BranchPythonOperator(
 )
 
 options = [DummyOperator(task_id=name, dag=dag) for name in list(set(weekday_person_to_email.values()))]
-end = DummyOperator(task_id='End', dag=dag)
+end = DummyOperator(task_id='End', dag=dag, trigger_rule=TriggerRule.ONE_SUCCESS)
 
 print_weekday >> branch_task >> options >> end

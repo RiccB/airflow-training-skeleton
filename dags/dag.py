@@ -1,44 +1,57 @@
 import airflow
-from airflow import DAG
+from airflow.models import DAG
 from airflow.operators.bash_operator import BashOperator
 from airflow.operators.dummy_operator import DummyOperator
+from airflow.operators.python_operator import BranchPythonOperator, PythonOperator
+
+args = {"owner": "godatadriven", "start_date": airflow.utils.dates.days_ago(14)}
 
 dag = DAG(
-    dag_id="hello_airflow",
-    default_args={
-        "owner": "godatadriven",
-        "start_date": airflow.utils.dates.days_ago(3),
-    },
+    dag_id="exercise3",
+    default_args=args,
+    description="Demo DAG showing BranchPythonOperator.",
+    schedule_interval="0 0 * * *",
+    start_date=args['start_date']
 )
 
-print_date = BashOperator(
-    task_id="print_exec_date", bash_command="echo {{ execution_date }}", dag=dag
+
+def print_weekday(execution_date, **context):
+    print(execution_date.strftime("%a"))
+
+
+print_weekday = PythonOperator(
+    task_id="print_weekday",
+    python_callable=print_weekday,
+    provide_context=True,
+    dag=dag
 )
 
-# wait_1 = BashOperator(
-#     task_id="wait_1",
-#     bash_command="sleep 1",
-#     dag=dag
-# )
-#
-# wait_5 = BashOperator(
-#     task_id="wait_5",
-#     bash_command="sleep 5",
-#     dag=dag
-# )
-#
-# wait_10 = BashOperator(
-#     task_id="wait_10",
-#     bash_command="sleep 10",
-#     dag=dag
-# )
-
-operators = []
-for i in [1, 5, 10]:
-    operators.append(BashOperator(task_id='wait_{}'.format(i), bash_command='sleep {}'.format(i), dag=dag))
-
-end = DummyOperator(task_id="end", dag=dag)
-
-print_date >> operators >> end
+# Definition of who is emailed on which weekday
+weekday_person_to_email = {
+    0: "Bob",  # Monday
+    1: "Joe",  # Tuesday
+    2: "Alice",  # Wednesday
+    3: "Joe",  # Thursday
+    4: "Alice",  # Friday
+    5: "Alice",  # Saturday
+    6: "Alice",  # Sunday
+}
 
 
+def choice(execution_date, **context):
+    if execution_date.strftime("%a") == 'Mon':
+        return 'Bob'
+    elif (execution_date.strftime("%a") == 'Tue') | (execution_date.strftime("%a") == 'Thu'):
+        return 'Joe'
+    else:
+        return 'Alice'
+
+
+branch_task = BranchPythonOperator(
+    task_id='branching',
+    python_callable=choice,
+    provide_context=True,
+    dag=dag
+)
+
+print_weekday >> branch_task >> DummyOperator(task_id='final')

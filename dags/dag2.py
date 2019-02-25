@@ -16,7 +16,7 @@ dag = DAG(
 bq_fetch_data = BigQueryGetDataOperator(
     task_id='bq_fetch_data',
     sql="select committer.name, count(*) as number \
-        from `bigquery-public-data.github_repos.commits` \
+        from [bigquery-public-data.github_repos.commits] \
         where date(committer.date) = '{{ ds }}' \
         group by committer.name \
         order by number asc \

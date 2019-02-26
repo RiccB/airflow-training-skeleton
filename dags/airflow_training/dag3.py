@@ -76,7 +76,7 @@ HttpToGcsOperator(dag=dag, task_id='get_currency', method='GET', endpoint="conve
 dataproc_create_cluster = DataprocClusterCreateOperator(
     task_id="create_dataproc",
     cluster_name="analyse-pricing-{{ ds }}",
-    project_id='ciao',
+    project_id='airflowbolcom-bc4a05f9b43155a6',
     num_workers=2,
     zone="europe-west4-a",
     dag=dag,
@@ -95,6 +95,6 @@ dag=dag, )
 dataproc_delete_cluster = DataprocClusterDeleteOperator(
     task_id="delete_dataproc",
     cluster_name="analyse-pricing-{{ ds }}",
-    project_id='ciao',
+    project_id='airflowbolcom-bc4a05f9b43155a6',
     trigger_rule=TriggerRule.ALL_DONE,
 dag=dag, )

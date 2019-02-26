@@ -44,9 +44,9 @@ class HttpToGcsOperator(BaseOperator):
 
     @apply_defaults
     def __init__(self,
+                 method,
                  endpoint,
                  gcs_path=None,
-                 method,
                  *args, **kwargs):
         super(HttpToGcsOperator, self).__init__(*args, **kwargs)
 

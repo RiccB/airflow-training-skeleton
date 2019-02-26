@@ -16,7 +16,7 @@ pgsl_to_gcs = PostgresToGoogleCloudStorageOperator(
     postgres_conn_id='postgres_default',
     sql="select * \
          from public.land_registry_price_paid_uk \
-         WHERE transfer_date = {{ds}}",
+         WHERE transfer_date = '{{ds}}'",
     bucket='riccardos_bucket',
     filename='house_data_{{ds}}.json',
     dag=dag,

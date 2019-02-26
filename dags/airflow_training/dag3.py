@@ -45,7 +45,7 @@ class HttpToGcsOperator(BaseOperator):
     @apply_defaults
     def __init__(self,
                  endpoint,
-                 gcs_path,
+                 gcs_path=None,
                  method,
                  *args, **kwargs):
         super(HttpToGcsOperator, self).__init__(*args, **kwargs)
@@ -61,4 +61,4 @@ class HttpToGcsOperator(BaseOperator):
         self.log.info(str(response))
 
 
-HttpToGcsOperator(method='GET', endpoint="convert-currency?date={{ds}}&from=GBP&to=EUR")
+HttpToGcsOperator(method='GET', endpoint="convert-currency?date={{ds}}&from=GBP&to=EUR", )

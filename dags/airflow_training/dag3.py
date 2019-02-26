@@ -61,4 +61,4 @@ class HttpToGcsOperator(BaseOperator):
         self.log.info(str(response))
 
 
-HttpToGcsOperator(method='GET', endpoint="convert-currency?date={{ds}}&from=GBP&to=EUR", gcs_path='' )
+HttpToGcsOperator(task_id='get_currency', method='GET', endpoint="convert-currency?date={{ds}}&from=GBP&to=EUR", gcs_path='' )

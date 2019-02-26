@@ -71,7 +71,7 @@ class HttpToGcsOperator(BaseOperator):
         GoogleCloudStorageHook().upload(bucket='riccardos_bucket', object=self.gcs_path, filename=tf.name)
 
 
-currency_gcs = HttpToGcsOperator(dag=dag, task_id='get_currency', method='GET', endpoint="convert-currency?date={{ds}}&from=GBP&to=EUR", gcs_path='currency/{{ds}}')
+currency_gcs = HttpToGcsOperator(dag=dag, task_id='get_currency', method='GET', endpoint="convert-currency?date={{ds}}&from=GBP&to=EUR", gcs_path='currency/{{ds}}.json')
 
 dataproc_create_cluster = DataprocClusterCreateOperator(
     task_id="create_dataproc",

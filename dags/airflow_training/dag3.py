@@ -71,7 +71,7 @@ class HttpToGcsOperator(BaseOperator):
         GoogleCloudStorageHook().upload(bucket='riccardos_bucket', object=self.gcs_path, filename=tf.name)
 
 
-HttpToGcsOperator(dag=dag, task_id='get_currency', method='GET', endpoint="convert-currency?date={{ds}}&from=GBP&to=EUR", gcs_path='currency/{{ds}}')
+currency_gcs = HttpToGcsOperator(dag=dag, task_id='get_currency', method='GET', endpoint="convert-currency?date={{ds}}&from=GBP&to=EUR", gcs_path='currency/{{ds}}')
 
 dataproc_create_cluster = DataprocClusterCreateOperator(
     task_id="create_dataproc",
@@ -98,3 +98,5 @@ dataproc_delete_cluster = DataprocClusterDeleteOperator(
     project_id='airflowbolcom-bc4a05f9b43155a6',
     trigger_rule=TriggerRule.ALL_DONE,
 dag=dag, )
+
+[pgsl_to_gcs, currency_gcs] >> dataproc_create_cluster >> compute_aggregates >> dataproc_delete_cluster

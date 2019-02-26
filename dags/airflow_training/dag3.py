@@ -6,6 +6,12 @@ from airflow.hooks.http_hook import HttpHook
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
 from airflow.contrib.hooks.gcs_hook import GoogleCloudStorageHook
+from airflow.utils.trigger_rule import TriggerRule
+from airflow.contrib.operators.dataproc_operator import (
+    DataprocClusterCreateOperator,
+    DataprocClusterDeleteOperator,
+    DataProcPySparkOperator,
+)
 
 dag = DAG(
     dag_id='real_estate',
@@ -66,3 +72,29 @@ class HttpToGcsOperator(BaseOperator):
 
 
 HttpToGcsOperator(dag=dag, task_id='get_currency', method='GET', endpoint="convert-currency?date={{ds}}&from=GBP&to=EUR", gcs_path='currency/{{ds}}')
+
+dataproc_create_cluster = DataprocClusterCreateOperator(
+    task_id="create_dataproc",
+    cluster_name="analyse-pricing-{{ ds }}",
+    project_id=PROJECT_ID,
+    num_workers=2,
+    zone="europe-west4-a",
+    dag=dag,
+)
+compute_aggregates = DataProcPySparkOperator(
+    task_id='compute_aggregates',
+    main='gs://gdd-training/build_statistics.py',
+    cluster_name='analyse-pricing-{{ ds }}',
+    arguments=[
+    "gs://airflow-training-data/house_data/{{ ds }}/*.json",
+    "gs://airflow-training-data/currency/{{ ds }}/*.json",
+    "gs://airflow-training-data/average_prices/{{ ds }}/"
+],
+dag=dag, )
+
+dataproc_delete_cluster = DataprocClusterDeleteOperator(
+    task_id="delete_dataproc",
+    cluster_name="analyse-pricing-{{ ds }}",
+    project_id=PROJECT_ID,
+    trigger_rule=TriggerRule.ALL_DONE,
+dag=dag, )

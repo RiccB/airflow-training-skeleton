@@ -86,9 +86,9 @@ compute_aggregates = DataProcPySparkOperator(
     main='gs://riccardos_bucket/build_statistics.py',
     cluster_name='analyse-pricing-{{ ds }}',
     arguments=[
-    "gs://airflow-training-data/house_data/{{ ds }}/*.json",
-    "gs://airflow-training-data/currency/{{ ds }}/*.json",
-    "gs://airflow-training-data/average_prices/{{ ds }}/"
+    "gs://riccardos_bucket/house_data/{{ ds }}/*.json",
+    "gs://riccardos_bucket/currency/{{ ds }}/*.json",
+    "gs://riccardos_bucket/average_prices/{{ ds }}/"
 ],
 dag=dag, )
 

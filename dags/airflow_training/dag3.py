@@ -59,9 +59,10 @@ class HttpToGcsOperator(BaseOperator):
         request = HttpHook(self.method)
         response = request.run(self.endpoint)
         self.log.info(str(response))
-        with NamedTemporaryFile() as tf:
-            tf.write(response.text)
-            GoogleCloudStorageHook().upload(bucket='riccardos_bucket', object=self.gcs_path, filename=tf.name)
+        tf = NamedTemporaryFile()
+        tf.write(response.text)
+        tf.flush()
+        GoogleCloudStorageHook().upload(bucket='riccardos_bucket', object=self.gcs_path, filename=tf.name)
 
 
-HttpToGcsOperator(dag=dag, task_id='get_currency', method='GET', endpoint="convert-currency?date={{ds}}&from=GBP&to=EUR", gcs_path='Currency_{{ds}}')
+HttpToGcsOperator(dag=dag, task_id='get_currency', method='GET', endpoint="convert-currency?date={{ds}}&from=GBP&to=EUR", gcs_path='currency/{{ds}}')
